@@ -6,9 +6,19 @@ import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="ja">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead
+				title={SITE_TITLE}
+				description={SITE_DESCRIPTION}
+				jsonLd={{
+					'@context': 'https://schema.org',
+					'@type': 'WebSite',
+					name: SITE_TITLE,
+					description: SITE_DESCRIPTION,
+					url: Astro.site?.href,
+				}}
+			/>
 	</head>
 	<body>
 		<Header />

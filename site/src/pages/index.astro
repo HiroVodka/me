@@ -1,5 +1,6 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
+import SocialIcon from '../components/SocialIcon.astro';
 import { fetchRss, sortByDate, type RssItem } from '../lib/rss';
 import { LINKS, PROFILE, RSS_SOURCES } from '../site.config';
 
@@ -34,11 +35,17 @@ const formatDate = (value: string) =>
   </head>
   <body>
     <main class="grid">
-      <header class="card">
-        <h1>{PROFILE.name}</h1>
-        <p class="muted">{PROFILE.role}</p>
+      <header class="hero">
+        <div class="hero-top">
+          <img class="avatar" src="/pro.JPG" alt={`${PROFILE.name} profile`} width="96" height="96" />
+          <div>
+            <p class="eyebrow">Portfolio</p>
+            <h1>{PROFILE.name}</h1>
+            <p class="muted">{PROFILE.role}</p>
+          </div>
+        </div>
         <p>{PROFILE.bio}</p>
-        <div>
+        <div class="tag-row">
           {PROFILE.stacks.map((stack) => <span class="tag">{stack}</span>)}
         </div>
       </header>
@@ -46,13 +53,12 @@ const formatDate = (value: string) =>
       <section class="card">
         <h2>Links</h2>
         <ul class="clean">
-          <li><a href={LINKS.blog}>Blog (blog.hirovodka.com)</a></li>
-          <li><a href={LINKS.github}>GitHub</a></li>
-          <li><a href={LINKS.x}>X</a></li>
-          <li><a href={LINKS.zenn}>Zenn</a></li>
-          <li><a href={LINKS.qiita}>Qiita</a></li>
-          <li><a href={LINKS.linkedin}>LinkedIn</a></li>
-          <li><a href="/README/">README / 職務経歴</a></li>
+          <li><a class="link-item" href={LINKS.blog}><SocialIcon type="blog" />Blog (blog.hirovodka.com)</a></li>
+          <li><a class="link-item" href={LINKS.github}><SocialIcon type="github" />GitHub</a></li>
+          <li><a class="link-item" href={LINKS.x}><SocialIcon type="x" />X</a></li>
+          <li><a class="link-item" href={LINKS.zenn}><SocialIcon type="zenn" />Zenn</a></li>
+          <li><a class="link-item" href={LINKS.linkedin}><SocialIcon type="linkedin" />LinkedIn</a></li>
+          <li><a class="link-item" href="/README/"><SocialIcon type="readme" />README / 職務経歴</a></li>
         </ul>
       </section>
 
@@ -66,8 +72,8 @@ const formatDate = (value: string) =>
               <ul class="clean">
                 {blogItems.map((item) => (
                   <li>
-                    <a href={item.link}>{item.title}</a>
-                    <div class="muted">{formatDate(item.pubDate)}</div>
+                    <a class="link-item" href={item.link}>{item.title}</a>
+                    <div class="list-date">{formatDate(item.pubDate)}</div>
                   </li>
                 ))}
               </ul>
@@ -84,8 +90,8 @@ const formatDate = (value: string) =>
               <ul class="clean">
                 {zennItems.map((item) => (
                   <li>
-                    <a href={item.link}>{item.title}</a>
-                    <div class="muted">{formatDate(item.pubDate)}</div>
+                    <a class="link-item" href={item.link}>{item.title}</a>
+                    <div class="list-date">{formatDate(item.pubDate)}</div>
                   </li>
                 ))}
               </ul>

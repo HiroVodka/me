@@ -1,5 +1,6 @@
 ---
 import BaseHead from '../components/BaseHead.astro';
+import SocialIcon from '../components/SocialIcon.astro';
 import { LINKS, PROFILE } from '../site.config';
 
 const title = `${PROFILE.name} Links`;
@@ -11,16 +12,21 @@ const description = 'SNSリンク一覧ページです。';
     <BaseHead title={title} description={description} />
   </head>
   <body>
-    <main>
-      <section class="card">
+    <main class="grid">
+      <header class="hero">
+        <p class="eyebrow">Social</p>
         <h1>Links</h1>
+        <p class="muted">{PROFILE.name} の各種プロフィールと投稿先です。</p>
+      </header>
+
+      <section class="card">
+        <h2>All Links</h2>
         <ul class="clean">
-          <li><a href={LINKS.github}>GitHub</a></li>
-          <li><a href={LINKS.x}>X</a></li>
-          <li><a href={LINKS.zenn}>Zenn</a></li>
-          <li><a href={LINKS.qiita}>Qiita</a></li>
-          <li><a href={LINKS.linkedin}>LinkedIn</a></li>
-          <li><a href={LINKS.blog}>Blog</a></li>
+          <li><a class="link-item" href={LINKS.github}><SocialIcon type="github" />GitHub</a></li>
+          <li><a class="link-item" href={LINKS.x}><SocialIcon type="x" />X</a></li>
+          <li><a class="link-item" href={LINKS.zenn}><SocialIcon type="zenn" />Zenn</a></li>
+          <li><a class="link-item" href={LINKS.linkedin}><SocialIcon type="linkedin" />LinkedIn</a></li>
+          <li><a class="link-item" href={LINKS.blog}><SocialIcon type="blog" />Blog</a></li>
         </ul>
       </section>
     </main>

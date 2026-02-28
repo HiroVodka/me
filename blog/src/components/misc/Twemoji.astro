@@ -1,0 +1,27 @@
+---
+import { getTwemojiUrl } from "@utils/twemoji";
+
+interface Props {
+	emoji?: string;
+	class?: string;
+}
+
+const { emoji = "" } = Astro.props;
+const className = Astro.props.class;
+const normalizedEmoji = emoji.trim();
+const src = normalizedEmoji ? getTwemojiUrl(normalizedEmoji) : "";
+---
+
+{
+	src && (
+		<img
+			src={src}
+			alt={normalizedEmoji}
+			width="20"
+			height="20"
+			loading="lazy"
+			decoding="async"
+			class:list={["inline-block align-[-0.12em] select-none", className]}
+		/>
+	)
+}

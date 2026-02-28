@@ -6,6 +6,7 @@ import I18nKey from "../i18n/i18nKey";
 import { i18n } from "../i18n/translation";
 import { getDir } from "../utils/url-utils";
 import ImageWrapper from "./misc/ImageWrapper.astro";
+import Twemoji from "./misc/Twemoji.astro";
 import PostMetadata from "./PostMeta.astro";
 
 interface Props {
@@ -13,6 +14,7 @@ interface Props {
 	entry: CollectionEntry<"posts">;
 	title: string;
 	url: string;
+	emoji?: string;
 	published: Date;
 	updated?: Date;
 	tags: string[];
@@ -26,6 +28,7 @@ const {
 	entry,
 	title,
 	url,
+	emoji = "",
 	published,
 	updated,
 	tags,
@@ -45,15 +48,21 @@ const { remarkPluginFrontmatter } = await entry.render();
 <div class:list={["card-base flex flex-col-reverse md:flex-col w-full rounded-[var(--radius-large)] overflow-hidden relative", className]} style={style}>
     <div class:list={["pl-6 md:pl-9 pr-6 md:pr-2 pt-6 md:pt-7 pb-6 relative", {"w-full md:w-[calc(100%_-_52px_-_12px)]": !hasCover, "w-full md:w-[calc(100%_-_var(--coverWidth)_-_12px)]": hasCover}]}>
         <a href={url}
-           class="transition group w-full block font-bold mb-3 text-3xl text-90
+           class="transition group w-full relative flex items-start gap-5 font-bold mb-3 text-3xl text-90
         hover:text-[var(--primary)] dark:hover:text-[var(--primary)]
         active:text-[var(--title-active)] dark:active:text-[var(--title-active)]
-        before:w-1 before:h-5 before:rounded-md before:bg-[var(--primary)]
-        before:absolute before:top-[35px] before:left-[18px] before:hidden md:before:block
         ">
-            {title}
-            <Icon class="inline text-[2rem] text-[var(--primary)] md:hidden translate-y-0.5 absolute" name="material-symbols:chevron-right-rounded" ></Icon>
-            <Icon class="text-[var(--primary)] text-[2rem] transition hidden md:inline absolute translate-y-0.5 opacity-0 group-hover:opacity-100 -translate-x-1 group-hover:translate-x-0" name="material-symbols:chevron-right-rounded"></Icon>
+            {emoji && (
+                <span class="mt-0.5 shrink-0 flex h-[120px] w-[120px] md:h-[132px] md:w-[132px] items-center justify-center rounded-[1.8rem]
+                    bg-[#f2f4f7] dark:bg-white/[0.08]">
+                    <Twemoji emoji={emoji} class="w-14 h-14 md:w-16 md:h-16" />
+                </span>
+            )}
+            <span class="block flex-1 pr-10 pt-1">
+                {title}
+            </span>
+            <Icon class="inline text-[2rem] text-[var(--primary)] md:hidden absolute right-0 top-1" name="material-symbols:chevron-right-rounded" ></Icon>
+            <Icon class="text-[var(--primary)] text-[2rem] transition hidden md:inline absolute right-0 top-1 opacity-0 -translate-x-1 group-hover:opacity-100 group-hover:translate-x-0" name="material-symbols:chevron-right-rounded"></Icon>
         </a>
 
         <!-- metadata -->

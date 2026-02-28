@@ -63,7 +63,9 @@ export type NavBarConfig = {
 export type ProfileConfig = {
 	avatar?: string;
 	name: string;
+	role?: string;
 	bio?: string;
+	stacks?: string[];
 	links: {
 		name: string;
 		url: string;
@@ -87,6 +89,7 @@ export type BlogPostData = {
 	title: string;
 	published: Date;
 	description: string;
+	emoji?: string;
 	tags: string[];
 	draft?: boolean;
 	image?: string;

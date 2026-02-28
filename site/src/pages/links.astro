@@ -1,0 +1,28 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import { LINKS, PROFILE } from '../site.config';
+
+const title = `${PROFILE.name} Links`;
+const description = 'SNSリンク一覧ページです。';
+---
+<!doctype html>
+<html lang="ja">
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+  <body>
+    <main>
+      <section class="card">
+        <h1>Links</h1>
+        <ul class="clean">
+          <li><a href={LINKS.github}>GitHub</a></li>
+          <li><a href={LINKS.x}>X</a></li>
+          <li><a href={LINKS.zenn}>Zenn</a></li>
+          <li><a href={LINKS.qiita}>Qiita</a></li>
+          <li><a href={LINKS.linkedin}>LinkedIn</a></li>
+          <li><a href={LINKS.blog}>Blog</a></li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

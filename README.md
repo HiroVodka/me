@@ -15,7 +15,7 @@ This repository is a small monorepo containing two static Astro sites, intended 
 The repo holds two independent Astro applications under a single Git repository:
 
 - **`site/`** — The profile/link site (hirovodka.com). Build output: `site/dist/`.
-- **blog/`** — The blog (blog.hirovodka.com). Build output: `blog/dist/`.
+- **`blog/`** — The blog (blog.hirovodka.com), now using the [Fuwari](https://github.com/saicaca/fuwari) theme with pnpm-managed dependencies. Build output: `blog/dist/`.
 
 Each app has its own `package.json`, `astro.config.mjs`, and dependencies. The root `package.json` exists only for convenience (e.g. CI or local “build everything”); **Cloudflare Pages must use the Root directory** set to `site` or `blog`, not the repo root.
 
@@ -40,29 +40,27 @@ me/
 │       │   └── README.astro  # Career / CV
 │       ├── site.config.ts    # PROFILE, LINKS, RSS_SOURCES
 │       └── styles.css
-└── blog/                     # Blog (blog.hirovodka.com)
+└── blog/                     # Blog (blog.hirovodka.com, Fuwari theme + pnpm)
     ├── astro.config.mjs
     ├── package.json
-    ├── tsconfig.json
+    ├── pnpm-lock.yaml
     ├── public/
-    │   ├── favicon.png
-    │   └── fonts/
+    │   ├── favicon/
+    │   └── images/
     └── src/
         ├── components/
+        ├── config.ts        # Site/profile/nav config
         ├── content/
-        │   └── blog/         # Markdown/MDX posts
-        ├── content.config.ts # Schema: title, description, pubDate, tags, draft
-        ├── consts.ts
+        │   ├── posts/       # Markdown posts
+        │   └── spec/        # About page content
         ├── layouts/
-        │   └── BlogPost.astro
         ├── pages/
-        │   ├── index.astro
-        │   ├── about.astro
-        │   ├── blog/
-        │   │   ├── index.astro
-        │   │   └── [...slug].astro
-        │   └── rss.xml.js    # RSS feed
-        └── styles/
+        │   ├── [...page].astro
+        │   ├── posts/[...slug].astro
+        │   ├── archive.astro
+        │   └── rss.xml.ts
+        ├── styles/
+        └── utils/
 ```
 
 ## Local development
@@ -72,29 +70,26 @@ Run each app from its own directory:
 ```bash
 # Profile site (hirovodka.com)
 cd site
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 
 # Blog (blog.hirovodka.com) — in another terminal
 cd blog
-npm install
-npm run dev
+pnpm install
+pnpm run dev
 ```
 
 From the repo root you can also use:
 
-```bash
-npm run dev:site   # runs site in dev mode
-npm run dev:blog   # runs blog in dev mode
-```
+Root-level scripts are still available for convenience, but they now call pnpm under the hood.
 
 ## Build and verification
 
 **Per-app build (recommended for CI and Cloudflare):**
 
 ```bash
-cd site && npm install && npm run build
-cd blog && npm install && npm run build
+cd site && pnpm install && pnpm run build
+cd blog && pnpm install && pnpm run build
 ```
 
 **Build both from root:**
@@ -120,7 +115,7 @@ Use **two separate Cloudflare Pages projects** (one for each site). Do not use t
 | Setting | hirovodka.com | blog.hirovodka.com |
 |--------|----------------|--------------------|
 | **Root directory** | `site` | `blog` |
-| **Build command** | `npm run build` | `npm run build` |
+| **Build command** | `pnpm run build` | `pnpm run build` |
 | **Build output directory** | `dist` | `dist` |
 | **Optional env** | `SITE_URL=https://hirovodka.com` | `SITE_URL=https://blog.hirovodka.com` |
 

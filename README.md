@@ -5,6 +5,10 @@
 - `site/` → `https://hirovodka.com`（プロフィール/リンク集）
 - `blog/` → `https://blog.hirovodka.com`（Markdown ブログ + RSS）
 
+
+> CIや単純な `npm run build` 実行向けに、ルートにも `package.json` を置いています。  
+> ルートの `npm run build` は `site` と `blog` のビルドを順番に実行します。
+
 ## ローカル開発
 
 ```bash

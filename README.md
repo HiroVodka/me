@@ -32,14 +32,17 @@ cd blog && npm run build
 
 ## Cloudflare Pages 設定
 
+**重要:** ルートでビルドすると `dist` が存在せずデプロイに失敗します。  
+**必ず「Root directory」に `site` または `blog` を指定し、プロジェクトを 2 つに分けてデプロイしてください。**
+
 ### 1) hirovodka.com 用
-- **Root directory**: `site`
+- **Root directory**: `site`（必須）
 - **Build command**: `npm run build`
 - **Build output directory**: `dist`
 - **Environment variable (任意)**: `SITE_URL=https://hirovodka.com`
 
 ### 2) blog.hirovodka.com 用
-- **Root directory**: `blog`
+- **Root directory**: `blog`（必須）
 - **Build command**: `npm run build`
 - **Build output directory**: `dist`
 - **Environment variable (任意)**: `SITE_URL=https://blog.hirovodka.com`

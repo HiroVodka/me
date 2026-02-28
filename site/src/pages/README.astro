@@ -1,0 +1,26 @@
+---
+import BaseHead from '../components/BaseHead.astro';
+import { PROFILE } from '../site.config';
+
+const title = `${PROFILE.name} README | Career`;
+const description = '職務経歴・ポートフォリオ概要ページです。';
+---
+<!doctype html>
+<html lang="ja">
+  <head>
+    <BaseHead title={title} description={description} />
+  </head>
+  <body>
+    <main class="grid">
+      <section class="card">
+        <h1>README / 職務経歴</h1>
+        <p>このページは職務経歴・ポートフォリオ用のプレースホルダーです。実績、案件、登壇、OSS活動などをここに追記してください。</p>
+        <ul>
+          <li>得意分野: フロントエンド開発、技術検証、ドキュメント作成</li>
+          <li>主な技術: TypeScript / React / Astro / Cloudflare</li>
+          <li>連絡先: GitHub / X / LinkedIn</li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

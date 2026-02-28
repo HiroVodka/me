@@ -1,11 +1,11 @@
 // @ts-check
-
-import mdx from '@astrojs/mdx';
 import sitemap from '@astrojs/sitemap';
 import { defineConfig } from 'astro/config';
 
-// https://astro.build/config
+const site = process.env.SITE_URL ?? 'https://hirovodka.com';
+
 export default defineConfig({
-	site: 'https://hirovodka.com',
-	integrations: [mdx(), sitemap()],
+  site,
+  trailingSlash: 'always',
+  integrations: [sitemap()],
 });

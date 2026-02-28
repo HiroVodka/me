@@ -1,18 +1,12 @@
 {
-  "name": "",
-  "type": "module",
+  "name": "me-monorepo",
+  "private": true,
   "version": "0.0.1",
   "scripts": {
-    "dev": "astro dev",
-    "build": "astro build",
-    "preview": "astro preview",
-    "astro": "astro"
-  },
-  "dependencies": {
-    "@astrojs/mdx": "^4.3.13",
-    "@astrojs/rss": "^4.0.15",
-    "@astrojs/sitemap": "^3.7.0",
-    "astro": "^5.17.1",
-    "sharp": "^0.34.3"
+    "build": "npm run build:site && npm run build:blog",
+    "build:site": "npm --prefix site install && npm --prefix site run build",
+    "build:blog": "npm --prefix blog install && npm --prefix blog run build",
+    "dev:site": "npm --prefix site run dev",
+    "dev:blog": "npm --prefix blog run dev"
   }
 }

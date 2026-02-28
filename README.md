@@ -1,58 +1,145 @@
 # hirovodka monorepo
 
-このリポジトリは 2 つの Astro プロジェクトを同居させた monorepo です。
+This repository is a small monorepo containing two static Astro sites, intended for deployment on Cloudflare Pages.
 
-- `site/` → `https://hirovodka.com`（プロフィール/リンク集）
-- `blog/` → `https://blog.hirovodka.com`（Markdown ブログ + RSS）
+> **Note:** This project was created and iterated on with AI assistance (e.g. Cursor).
 
+## Goals
 
-> CIや単純な `npm run build` 実行向けに、ルートにも `package.json` を置いています。  
-> ルートの `npm run build` は `site` と `blog` のビルドを順番に実行します。
+- **hirovodka.com** — Personal profile and link hub (top path `/` is the profile; `/README` is a career/CV page).
+- **blog.hirovodka.com** — Markdown blog with RSS.
+- Both are fully static (no SSR). The same GitHub repo is used to deploy **two separate Cloudflare Pages projects**.
 
-## ローカル開発
+## Monorepo overview
+
+The repo holds two independent Astro applications under a single Git repository:
+
+- **`site/`** — The profile/link site (hirovodka.com). Build output: `site/dist/`.
+- **blog/`** — The blog (blog.hirovodka.com). Build output: `blog/dist/`.
+
+Each app has its own `package.json`, `astro.config.mjs`, and dependencies. The root `package.json` exists only for convenience (e.g. CI or local “build everything”); **Cloudflare Pages must use the Root directory** set to `site` or `blog`, not the repo root.
+
+## Project structure
+
+```
+me/
+├── README.md
+├── package.json              # Root scripts: build both, dev:site, dev:blog
+├── site/                     # Profile / link site (hirovodka.com)
+│   ├── astro.config.mjs
+│   ├── package.json
+│   ├── tsconfig.json
+│   └── src/
+│       ├── components/
+│       │   └── BaseHead.astro
+│       ├── lib/
+│       │   └── rss.ts        # RSS fetch & parse (build-time)
+│       ├── pages/
+│       │   ├── index.astro   # Profile + links + “Recent posts” (RSS)
+│       │   ├── links.astro
+│       │   └── README.astro  # Career / CV
+│       ├── site.config.ts    # PROFILE, LINKS, RSS_SOURCES
+│       └── styles.css
+└── blog/                     # Blog (blog.hirovodka.com)
+    ├── astro.config.mjs
+    ├── package.json
+    ├── tsconfig.json
+    ├── public/
+    │   ├── favicon.png
+    │   └── fonts/
+    └── src/
+        ├── components/
+        ├── content/
+        │   └── blog/         # Markdown/MDX posts
+        ├── content.config.ts # Schema: title, description, pubDate, tags, draft
+        ├── consts.ts
+        ├── layouts/
+        │   └── BlogPost.astro
+        ├── pages/
+        │   ├── index.astro
+        │   ├── about.astro
+        │   ├── blog/
+        │   │   ├── index.astro
+        │   │   └── [...slug].astro
+        │   └── rss.xml.js    # RSS feed
+        └── styles/
+```
+
+## Local development
+
+Run each app from its own directory:
 
 ```bash
-# profile site
+# Profile site (hirovodka.com)
 cd site
-npm i
+npm install
 npm run dev
 
-# blog
-cd ../blog
-npm i
+# Blog (blog.hirovodka.com) — in another terminal
+cd blog
+npm install
 npm run dev
 ```
 
-## ビルド
+From the repo root you can also use:
 
 ```bash
-cd site && npm run build
-cd blog && npm run build
+npm run dev:site   # runs site in dev mode
+npm run dev:blog   # runs blog in dev mode
 ```
 
-## Cloudflare Pages 設定
+## Build and verification
 
-**重要:** ルートでビルドすると `dist` が存在せずデプロイに失敗します。  
-**必ず「Root directory」に `site` または `blog` を指定し、プロジェクトを 2 つに分けてデプロイしてください。**
+**Per-app build (recommended for CI and Cloudflare):**
 
-### 1) hirovodka.com 用
-- **Root directory**: `site`（必須）
-- **Build command**: `npm run build`
-- **Build output directory**: `dist`
-- **Environment variable (任意)**: `SITE_URL=https://hirovodka.com`
+```bash
+cd site && npm install && npm run build
+cd blog && npm install && npm run build
+```
 
-### 2) blog.hirovodka.com 用
-- **Root directory**: `blog`（必須）
-- **Build command**: `npm run build`
-- **Build output directory**: `dist`
-- **Environment variable (任意)**: `SITE_URL=https://blog.hirovodka.com`
+**Build both from root:**
 
-## RSS集約（site 側）
+```bash
+npm run build
+```
 
-`site/src/site.config.ts` でリンクとRSS元URLを管理しています。
+This runs `build:site` then `build:blog` (each runs `npm install` in its folder and then `astro build`). Outputs are `site/dist/` and `blog/dist/`; there is no `dist` at the repo root.
 
-- SNSリンク: `LINKS`
-- RSS元URL: `RSS_SOURCES`
+**Local preview after build:**
 
-トップページ（`site/src/pages/index.astro`）がビルド時にRSSを取得し、最新記事を静的HTMLへ埋め込みます。
-取得失敗時はビルドを落とさず「取得できませんでした」を表示します。
+```bash
+cd site && npx astro preview
+# or
+cd blog && npx astro preview
+```
+
+## Cloudflare Pages setup
+
+Use **two separate Cloudflare Pages projects** (one for each site). Do not use the repository root as the project root, or the build will succeed but the output directory `dist` will not exist at root and deployment will fail.
+
+| Setting | hirovodka.com | blog.hirovodka.com |
+|--------|----------------|--------------------|
+| **Root directory** | `site` | `blog` |
+| **Build command** | `npm run build` | `npm run build` |
+| **Build output directory** | `dist` | `dist` |
+| **Optional env** | `SITE_URL=https://hirovodka.com` | `SITE_URL=https://blog.hirovodka.com` |
+
+Add custom domains in each project (e.g. `hirovodka.com` and `blog.hirovodka.com`) under **Settings → Custom domains**.
+
+## RSS aggregation (site)
+
+The profile site’s top page fetches RSS feeds at **build time** and embeds the latest posts into static HTML.
+
+- **Config:** `site/src/site.config.ts` — `LINKS` (social URLs) and `RSS_SOURCES` (e.g. blog RSS, Zenn feed).
+- **Behavior:** `site/src/pages/index.astro` calls `site/src/lib/rss.ts` to fetch and parse RSS; on failure it shows a “could not fetch” message and does not fail the build.
+
+## Blog (draft, RSS, sitemap)
+
+- **RSS:** Served at `/rss.xml`; draft posts are excluded.
+- **Sitemap:** Generated by `@astrojs/sitemap`; only built routes are included (drafts are not built).
+- **Content schema:** `blog/src/content.config.ts` — frontmatter includes `title`, `description`, `pubDate`, `tags`, `draft`. Posts with `draft: true` are omitted from the collection, RSS, and sitemap.
+
+## Other
+
+- **Astro:** Both apps use `trailingSlash: 'always'` and optional `SITE_URL` in config for canonical URLs and sitemaps.
+- **Tech:** Astro 5, TypeScript, minimal dependencies; RSS parsing is custom in `site/src/lib/rss.ts` (no extra RSS library).

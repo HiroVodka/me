@@ -74,6 +74,7 @@ const bannerOffset =
 const defaultOgImage = url("/pro.JPG");
 const resolvedOgImage = ogImage && ogImage.trim().length > 0 ? ogImage : defaultOgImage;
 const ogImageUrl = new URL(resolvedOgImage, Astro.site ?? Astro.url).toString();
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site ?? Astro.url).toString();
 ---
 
 <!DOCTYPE html>
@@ -88,22 +89,23 @@ const ogImageUrl = new URL(resolvedOgImage, Astro.site ?? Astro.url).toString();
 		<meta name="description" content={description || pageTitle}>
 		<meta name="author" content={profileConfig.name}>
 
-		<meta property="og:site_name" content={siteConfig.title}>
-		<meta property="og:url" content={Astro.url}>
-		<meta property="og:title" content={pageTitle}>
-		<meta property="og:description" content={description || pageTitle}>
-		<meta property="og:image" content={ogImageUrl}>
+			<meta property="og:site_name" content={siteConfig.title}>
+			<meta property="og:url" content={canonicalUrl}>
+			<meta property="og:title" content={pageTitle}>
+			<meta property="og:description" content={description || pageTitle}>
+			<meta property="og:image" content={ogImageUrl}>
 		{setOGTypeArticle ? (
         <meta property="og:type" content="article" />
         ) : (
         <meta property="og:type" content="website" />
         )}
 
-		<meta name="twitter:card" content="summary_large_image">
-		<meta property="twitter:url" content={Astro.url}>
-		<meta name="twitter:title" content={pageTitle}>
-		<meta name="twitter:description" content={description || pageTitle}>
-		<meta name="twitter:image" content={ogImageUrl}>
+			<meta name="twitter:card" content="summary_large_image">
+			<meta name="twitter:url" content={canonicalUrl}>
+			<meta name="twitter:title" content={pageTitle}>
+			<meta name="twitter:description" content={description || pageTitle}>
+			<meta name="twitter:image" content={ogImageUrl}>
+			<link rel="canonical" href={canonicalUrl}>
 
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />

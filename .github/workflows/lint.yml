@@ -49,17 +49,13 @@ jobs:
         with:
           run_install: false
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: pnpm
-
       - name: Setup Task
         uses: arduino/setup-task@v2
 
-      - name: Install dependencies
-        run: pnpm install --no-frozen-lockfile
+      - name: Install typos-cli
+        uses: taiki-e/install-action@v2
+        with:
+          tool: typos-cli
 
       - name: Run typos
         run: task lint:typos

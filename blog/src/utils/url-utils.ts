@@ -16,6 +16,14 @@ export function getPostUrlBySlug(slug: string): string {
 	return url(`/posts/${slug}/`);
 }
 
+export function getPostOgImageUrlBySlug(slug: string): string {
+	const encodedSlug = slug
+		.split("/")
+		.map((segment) => encodeURIComponent(segment))
+		.join("/");
+	return url(`/og/${encodedSlug}.png`);
+}
+
 export function getTagUrl(tag: string): string {
 	if (!tag) return url("/archive/");
 	return url(`/archive/?tag=${encodeURIComponent(tag.trim())}`);

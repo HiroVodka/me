@@ -17,3 +17,5 @@ export const RSS_SOURCES = {
   blog: 'https://blog.hirovodka.com/rss.xml',
   zenn: 'https://zenn.dev/hirovodka/feed',
 };
+
+export const OGP_IMAGE_PATH = '/pro.JPG';

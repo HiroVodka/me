@@ -1,8 +1,27 @@
 # hirovodka monorepo
 
-This repository is a small monorepo containing two static Astro sites, intended for deployment on Cloudflare Pages.
+This repository is a monorepo for my personal web presence, hosting two static Astro sites deployed independently on Cloudflare Pages:
 
-> **Note:** This project was created and iterated on with AI assistance (e.g. Cursor).
+- `https://hirovodka.com` (profile / links)
+- `https://blog.hirovodka.com` (blog)
+
+[![Astro](https://img.shields.io/badge/Astro-5.x-111111?logo=astro)](https://astro.build/)
+[![Node](https://img.shields.io/badge/Node-22-339933?logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![pnpm](https://img.shields.io/badge/pnpm-9.x-F69220?logo=pnpm&logoColor=white)](https://pnpm.io/)
+[![Cloudflare Pages](https://img.shields.io/badge/Deploy-Cloudflare%20Pages-F38020?logo=cloudflarepages&logoColor=white)](https://pages.cloudflare.com/)
+
+> [!IMPORTANT]
+> This repo deploys to two different Cloudflare Pages projects.  
+> Set project root to `site` or `blog` (never repo root).
+
+Note: This project was created and iterated on with AI assistance (e.g. Cursor).
+
+## Sites
+
+| Site | Purpose | Source | Output |
+|------|---------|--------|--------|
+| `https://hirovodka.com` | Personal profile and link hub | `site/` | `site/dist/` |
+| `https://blog.hirovodka.com` | Markdown blog with RSS | `blog/` | `blog/dist/` |
 
 ## Goals
 
@@ -79,9 +98,7 @@ pnpm install
 pnpm run dev
 ```
 
-From the repo root you can also use:
-
-Root-level scripts are still available for convenience, but they now call pnpm under the hood.
+From the repo root, task-based commands are available via `Taskfile.yml`.
 
 ## Task commands
 
@@ -120,10 +137,10 @@ cd blog && pnpm install && pnpm run build
 **Build both from root:**
 
 ```bash
-npm run build
+pnpm run build
 ```
 
-This runs `build:site` then `build:blog` (each runs `npm install` in its folder and then `astro build`). Outputs are `site/dist/` and `blog/dist/`; there is no `dist` at the repo root.
+This runs `build:site` then `build:blog` (each runs `pnpm install` in its folder and then `astro build`). Outputs are `site/dist/` and `blog/dist/`; there is no `dist` at the repo root.
 
 **Local preview after build:**
 
@@ -163,3 +180,13 @@ The profile site’s top page fetches RSS feeds at **build time** and embeds the
 
 - **Astro:** Both apps use `trailingSlash: 'always'` and optional `SITE_URL` in config for canonical URLs and sitemaps.
 - **Tech:** Astro 5, TypeScript, minimal dependencies; RSS parsing is custom in `site/src/lib/rss.ts` (no extra RSS library).
+
+<details>
+<summary>README design notes (used in this file)</summary>
+
+- Badges (`shields.io`) for quick visual scanning
+- GitHub callout (`[!IMPORTANT]`) for deploy pitfalls
+- Compact table for the two sites
+- Existing technical sections kept for contributor onboarding
+
+</details>

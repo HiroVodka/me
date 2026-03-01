@@ -1,0 +1,118 @@
+version: '3'
+
+tasks:
+  default:
+    desc: Show available tasks
+    cmds:
+      - task --list
+
+  install:
+    desc: Install dependencies for root/site/blog
+    deps:
+      - install:root
+      - install:site
+      - install:blog
+
+  install:root:
+    desc: Install root dependencies
+    cmds:
+      - pnpm install
+
+  install:site:
+    desc: Install site dependencies
+    cmds:
+      - npm --prefix site install
+
+  install:blog:
+    desc: Install blog dependencies
+    cmds:
+      - pnpm --dir blog install
+
+  dev:site:
+    desc: Run site dev server
+    cmds:
+      - npm --prefix site run dev
+
+  dev:blog:
+    desc: Run blog dev server
+    cmds:
+      - pnpm --dir blog run dev
+
+  build:
+    desc: Build both site and blog
+    deps:
+      - build:site
+      - build:blog
+
+  build:site:
+    desc: Build site
+    cmds:
+      - npm --prefix site run build
+
+  build:blog:
+    desc: Build blog
+    cmds:
+      - pnpm --dir blog run build
+
+  preview:site:
+    desc: Preview built site
+    cmds:
+      - npm --prefix site run preview
+
+  preview:blog:
+    desc: Preview built blog
+    cmds:
+      - pnpm --dir blog run preview
+
+  check:blog:
+    desc: Run astro check for blog
+    cmds:
+      - pnpm --dir blog run check
+
+  check:site:
+    desc: Run astro check for site
+    cmds:
+      - npm --prefix site exec astro check
+
+  lint:blog:
+    desc: Run biome lint for blog src
+    cmds:
+      - pnpm --dir blog run lint
+
+  format:blog:
+    desc: Run biome format for blog src
+    cmds:
+      - pnpm --dir blog run format
+
+  lint:md:
+    desc: Lint markdown/mdx files
+    cmds:
+      - pnpm run lint:md
+
+  lint:text:
+    desc: Lint Japanese technical writing
+    cmds:
+      - pnpm run lint:text
+
+  lint:typos:
+    desc: Lint typos in repository
+    cmds:
+      - pnpm run lint:typos
+
+  lint:docs:
+    desc: Run markdown/text/typo lints
+    deps:
+      - lint:md
+      - lint:text
+      - lint:typos
+
+  lint:all:
+    desc: Run all lint tasks (docs + blog biome)
+    deps:
+      - lint:docs
+      - lint:blog
+
+  new-post:
+    desc: 'Create a new blog post (usage: task new-post -- <title>)'
+    cmds:
+      - pnpm --dir blog run new-post -- {{.CLI_ARGS}}

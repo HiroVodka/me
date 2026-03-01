@@ -1,7 +1,10 @@
 export function getTwemojiUrl(emoji: string): string {
 	const codePoints = Array.from(emoji.trim())
 		.map((char) => char.codePointAt(0))
-		.filter((codePoint): codePoint is number => codePoint !== undefined && codePoint !== 0xfe0f)
+		.filter(
+			(codePoint): codePoint is number =>
+				codePoint !== undefined && codePoint !== 0xfe0f,
+		)
 		.map((codePoint) => codePoint.toString(16));
 
 	if (codePoints.length === 0) {

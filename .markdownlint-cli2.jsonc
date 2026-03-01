@@ -1,0 +1,18 @@
+{
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD033": false,
+    "MD041": false
+  },
+  "globs": [
+    "**/*.md",
+    "**/*.mdx",
+    "!AGENTS.md",
+    "!blog/**",
+    "!**/node_modules/**",
+    "!**/.astro/**",
+    "!**/dist/**",
+    "!**/.pnpm-store/**"
+  ]
+}

@@ -1,5 +1,5 @@
-import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
+import type { APIRoute } from "astro";
 import sharp from "sharp";
 import { profileConfig, siteConfig } from "@/config";
 
@@ -26,7 +26,11 @@ function escapeXml(value: string): string {
 		.replaceAll("'", "&apos;");
 }
 
-function wrapLines(value: string, lineLength: number, maxLines: number): string[] {
+function wrapLines(
+	value: string,
+	lineLength: number,
+	maxLines: number,
+): string[] {
 	const normalized = value.replace(/\s+/g, " ").trim();
 	if (!normalized) {
 		return [];
@@ -35,7 +39,11 @@ function wrapLines(value: string, lineLength: number, maxLines: number): string[
 	const chars = Array.from(normalized);
 	const lines: string[] = [];
 
-	for (let i = 0; i < chars.length && lines.length < maxLines; i += lineLength) {
+	for (
+		let i = 0;
+		i < chars.length && lines.length < maxLines;
+		i += lineLength
+	) {
 		lines.push(chars.slice(i, i + lineLength).join(""));
 	}
 
@@ -63,7 +71,11 @@ export async function getStaticPaths() {
 
 export const GET: APIRoute = async ({ props }) => {
 	const ogProps = props as OgProps;
-	const titleLines = wrapLines(ogProps.title, TITLE_LINE_LENGTH, TITLE_MAX_LINES).map(escapeXml);
+	const titleLines = wrapLines(
+		ogProps.title,
+		TITLE_LINE_LENGTH,
+		TITLE_MAX_LINES,
+	).map(escapeXml);
 	const descriptionLines = wrapLines(
 		ogProps.description || siteConfig.subtitle,
 		DESCRIPTION_LINE_LENGTH,

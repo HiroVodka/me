@@ -7,7 +7,16 @@
     "build:site": "npm --prefix site install && npm --prefix site run build",
     "build:blog": "pnpm --dir blog install && pnpm --dir blog run build",
     "dev:site": "npm --prefix site run dev",
-    "dev:blog": "pnpm --dir blog run dev"
+    "dev:blog": "pnpm --dir blog run dev",
+    "lint:md": "markdownlint-cli2",
+    "lint:text": "textlint \"**/*.{md,mdx}\"",
+    "lint:typos": "typos .",
+    "lint:docs": "pnpm run lint:md && pnpm run lint:text && pnpm run lint:typos"
+  },
+  "devDependencies": {
+    "markdownlint-cli2": "^0.18.1",
+    "textlint": "^15.2.0",
+    "textlint-rule-preset-ja-technical-writing": "^12.0.2"
   },
   "packageManager": "pnpm@9.12.3+sha512.cce0f9de9c5a7c95bef944169cc5dfe8741abfb145078c0d508b868056848a87c81e626246cb60967cbd7fd29a6c062ef73ff840d96b3c86c40ac92cf4a813ee"
 }

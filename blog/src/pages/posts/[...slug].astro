@@ -14,8 +14,8 @@ import {
 import { Icon } from "astro-icon/components";
 import { licenseConfig } from "src/config";
 import ImageWrapper from "../../components/misc/ImageWrapper.astro";
-import PostMetadata from "../../components/PostMeta.astro";
 import Twemoji from "../../components/misc/Twemoji.astro";
+import PostMetadata from "../../components/PostMeta.astro";
 import { profileConfig, siteConfig } from "../../config";
 import { formatDateToYYYYMMDD } from "../../utils/date-utils";
 
@@ -58,7 +58,9 @@ const jsonLd = {
 	url: postUrl,
 	mainEntityOfPage: postUrl,
 	datePublished: formatDateToYYYYMMDD(entry.data.published),
-	dateModified: formatDateToYYYYMMDD(entry.data.updated ?? entry.data.published),
+	dateModified: formatDateToYYYYMMDD(
+		entry.data.updated ?? entry.data.published,
+	),
 	image: postOgImage,
 	inLanguage: entry.data.lang
 		? entry.data.lang.replace("_", "-")

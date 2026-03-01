@@ -1,5 +1,5 @@
-import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
+import type { APIRoute } from "astro";
 
 type SearchItem = {
 	url: string;
@@ -23,7 +23,7 @@ function escapeHtml(input: string): string {
 function stripToText(input: string): string {
 	return input
 		.replace(/<[^>]+>/g, " ")
-		.replace(/[`*_#>\[\]()!~|]/g, " ")
+		.replace(/[`*_#>[\]()!~|]/g, " ")
 		.replace(/\s+/g, " ")
 		.trim();
 }
@@ -44,7 +44,10 @@ function buildExcerpt(text: string, keyword: string): string {
 	const snippet = plain.slice(start, end).trim();
 	const escaped = escapeHtml(snippet);
 	return escaped.replace(
-		new RegExp(escapeHtml(keyword).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "gi"),
+		new RegExp(
+			escapeHtml(keyword).replace(/[.*+?^${}()|[\]\\]/g, "\\$&"),
+			"gi",
+		),
 		"<mark>$&</mark>",
 	);
 }
@@ -69,7 +72,9 @@ export const GET: APIRoute = async ({ request }) => {
 		.map((post) => {
 			const title = post.data.title ?? "";
 			const description = post.data.description ?? "";
-			const tags = Array.isArray(post.data.tags) ? post.data.tags.join(" ") : "";
+			const tags = Array.isArray(post.data.tags)
+				? post.data.tags.join(" ")
+				: "";
 			const category = post.data.category ?? "";
 			const bodyText = stripToText(post.body ?? "");
 
@@ -92,7 +97,10 @@ export const GET: APIRoute = async ({ request }) => {
 				item: {
 					url: `/posts/${post.slug}/`,
 					meta: { title: post.data.title },
-					excerpt: buildExcerpt(post.body ?? post.data.description ?? "", query),
+					excerpt: buildExcerpt(
+						post.body ?? post.data.description ?? "",
+						query,
+					),
 				} satisfies SearchItem,
 			};
 		})

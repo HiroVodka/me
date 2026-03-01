@@ -21,7 +21,7 @@ Each app has its own `package.json`, `astro.config.mjs`, and dependencies. The r
 
 ## Project structure
 
-```
+```text
 me/
 ├── README.md
 ├── package.json              # Root scripts: build both, dev:site, dev:blog
@@ -82,6 +82,31 @@ pnpm run dev
 From the repo root you can also use:
 
 Root-level scripts are still available for convenience, but they now call pnpm under the hood.
+
+## Task commands
+
+This repo now provides a root `Taskfile.yml` so command operations can be managed via `task`.
+
+```bash
+# dependency install
+task install
+
+# dev servers
+task dev:site
+task dev:blog
+
+# builds
+task build
+task build:site
+task build:blog
+
+# lint
+task lint:docs
+task lint:all
+task lint:md
+task lint:text
+task lint:typos
+```
 
 ## Build and verification
 

@@ -1,0 +1,21 @@
+[files]
+extend-exclude = [
+  "**/.astro/**",
+  "**/dist/**",
+  "**/node_modules/**",
+  "**/.pnpm-store/**",
+  "AGENTS.md",
+  "blog/**",
+  "hirovodka.hatenablog.jp.export.txt",
+  "**/*.jpg",
+  "**/*.jpeg",
+  "**/*.png",
+  "**/*.JPG",
+  "**/*.PNG",
+]
+
+[default]
+check-filename = true
+extend-ignore-re = [
+  "https?://\\S+",
+]

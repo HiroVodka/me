@@ -10,13 +10,31 @@ const readTag = (xml: string, tag: string): string => {
   return (match?.[1] ?? '').replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1').trim();
 };
 
+const readLink = (xml: string): string => {
+  const inline = readTag(xml, 'link');
+  if (inline) return inline;
+
+  const hrefMatch = xml.match(/<link\b[^>]*\bhref=["']([^"']+)["'][^>]*\/?>/i);
+  return (hrefMatch?.[1] ?? '').trim();
+};
+
+const readDate = (xml: string): string =>
+  readTag(xml, 'pubDate') ||
+  readTag(xml, 'dc:date') ||
+  readTag(xml, 'published') ||
+  readTag(xml, 'updated');
+
 const parseItems = (xml: string, source: string): RssItem[] => {
-  const chunks = xml.match(/<item[\s\S]*?<\/item>/gi) ?? [];
+  const chunks = [
+    ...(xml.match(/<item[\s\S]*?<\/item>/gi) ?? []),
+    ...(xml.match(/<entry[\s\S]*?<\/entry>/gi) ?? []),
+  ];
+
   return chunks
     .map((itemXml) => ({
       title: readTag(itemXml, 'title'),
-      link: readTag(itemXml, 'link'),
-      pubDate: readTag(itemXml, 'pubDate') || readTag(itemXml, 'dc:date'),
+      link: readLink(itemXml),
+      pubDate: readDate(itemXml),
       source,
     }))
     .filter((item) => item.title && item.link);

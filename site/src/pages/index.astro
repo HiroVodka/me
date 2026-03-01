@@ -14,13 +14,15 @@ let zennError = false;
 
 try {
   blogItems = sortByDate(await fetchRss(RSS_SOURCES.blog, 'Blog')).slice(0, 4);
-} catch {
+} catch (error) {
+  console.error('Blog RSS fetch failed:', error);
   blogError = true;
 }
 
 try {
   zennItems = sortByDate(await fetchRss(RSS_SOURCES.zenn, 'Zenn')).slice(0, 4);
-} catch {
+} catch (error) {
+  console.error('Zenn RSS fetch failed:', error);
   zennError = true;
 }
 

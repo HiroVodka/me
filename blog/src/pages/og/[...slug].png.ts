@@ -1,20 +1,17 @@
 import { getCollection } from "astro:content";
 import type { APIRoute } from "astro";
 import sharp from "sharp";
-import { profileConfig, siteConfig } from "@/config";
 
 export const prerender = true;
 
 const WIDTH = 1200;
 const HEIGHT = 630;
-const TITLE_LINE_LENGTH = 24;
+// 15 full-width chars ~= 30 visual units.
+const TITLE_LINE_UNITS = 30;
 const TITLE_MAX_LINES = 3;
-const DESCRIPTION_LINE_LENGTH = 46;
-const DESCRIPTION_MAX_LINES = 2;
 
 type OgProps = {
 	title: string;
-	description: string;
 };
 
 function escapeXml(value: string): string {
@@ -26,11 +23,37 @@ function escapeXml(value: string): string {
 		.replaceAll("'", "&apos;");
 }
 
-function wrapLines(
-	value: string,
-	lineLength: number,
-	maxLines: number,
-): string[] {
+function getCharUnits(char: string): number {
+	// CJK, full-width symbols and emoji occupy more horizontal space.
+	if (
+		/[\u1100-\u115f\u2329\u232a\u2e80-\ua4cf\uac00-\ud7a3\uf900-\ufaff\ufe10-\ufe19\ufe30-\ufe6f\uff01-\uff60\uffe0-\uffe6]/u.test(
+			char,
+		) ||
+		/\p{Extended_Pictographic}/u.test(char)
+	) {
+		return 2;
+	}
+	return 1;
+}
+
+function trimToUnitsWithEllipsis(value: string, maxUnits: number): string {
+	const chars = Array.from(value);
+	let units = 0;
+	let out = "";
+
+	for (const char of chars) {
+		const next = getCharUnits(char);
+		if (units + next > maxUnits - 1) {
+			break;
+		}
+		out += char;
+		units += next;
+	}
+
+	return out.trimEnd() + "…";
+}
+
+function wrapLines(value: string, lineUnits: number, maxLines: number): string[] {
 	const normalized = value.replace(/\s+/g, " ").trim();
 	if (!normalized) {
 		return [];
@@ -38,21 +61,35 @@ function wrapLines(
 
 	const chars = Array.from(normalized);
 	const lines: string[] = [];
+	let current = "";
+	let currentUnits = 0;
 
-	for (
-		let i = 0;
-		i < chars.length && lines.length < maxLines;
-		i += lineLength
-	) {
-		lines.push(chars.slice(i, i + lineLength).join(""));
+	for (const char of chars) {
+		const nextUnits = getCharUnits(char);
+		if (current && currentUnits + nextUnits > lineUnits) {
+			lines.push(current);
+			current = char;
+			currentUnits = nextUnits;
+			if (lines.length === maxLines) {
+				break;
+			}
+			continue;
+		}
+		current += char;
+		currentUnits += nextUnits;
 	}
 
-	if (chars.length > lineLength * maxLines && lines.length > 0) {
-		const lastLineChars = Array.from(lines[lines.length - 1]);
-		if (lastLineChars.length > 0) {
-			lastLineChars[lastLineChars.length - 1] = "…";
-		}
-		lines[lines.length - 1] = lastLineChars.join("");
+	if (lines.length < maxLines && current) {
+		lines.push(current);
+	}
+
+	const usedLength = lines.join("").length;
+	const wasTruncated = usedLength < chars.length;
+	if (wasTruncated && lines.length > 0) {
+		lines[lines.length - 1] = trimToUnitsWithEllipsis(
+			lines[lines.length - 1],
+			lineUnits,
+		);
 	}
 
 	return lines;
@@ -64,7 +101,6 @@ export async function getStaticPaths() {
 		params: { slug: entry.slug },
 		props: {
 			title: entry.data.title,
-			description: entry.data.description || siteConfig.subtitle,
 		} satisfies OgProps,
 	}));
 }
@@ -73,28 +109,14 @@ export const GET: APIRoute = async ({ props }) => {
 	const ogProps = props as OgProps;
 	const titleLines = wrapLines(
 		ogProps.title,
-		TITLE_LINE_LENGTH,
+		TITLE_LINE_UNITS,
 		TITLE_MAX_LINES,
 	).map(escapeXml);
-	const descriptionLines = wrapLines(
-		ogProps.description || siteConfig.subtitle,
-		DESCRIPTION_LINE_LENGTH,
-		DESCRIPTION_MAX_LINES,
-	).map(escapeXml);
-	const author = escapeXml(profileConfig.name);
-	const siteTitle = escapeXml(siteConfig.title);
 	const titleText = titleLines
 		.map((line, index) =>
 			index === 0
 				? `<tspan x="96" dy="0">${line}</tspan>`
-				: `<tspan x="96" dy="74">${line}</tspan>`,
-		)
-		.join("");
-	const descriptionText = descriptionLines
-		.map((line, index) =>
-			index === 0
-				? `<tspan x="96" dy="0">${line}</tspan>`
-				: `<tspan x="96" dy="42">${line}</tspan>`,
+				: `<tspan x="96" dy="82">${line}</tspan>`,
 		)
 		.join("");
 
@@ -113,10 +135,7 @@ export const GET: APIRoute = async ({ props }) => {
   <rect width="${WIDTH}" height="${HEIGHT}" rx="32" fill="url(#bg)"/>
   <rect x="60" y="60" width="1080" height="510" rx="28" fill="rgba(255,255,255,0.06)" stroke="rgba(255,255,255,0.14)"/>
   <rect x="96" y="96" width="280" height="10" rx="5" fill="url(#accent)"/>
-  <text x="96" y="176" fill="#e2e8f0" font-size="32" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">${siteTitle}</text>
-  <text x="96" y="270" fill="#f8fafc" font-size="64" font-weight="700" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">${titleText}</text>
-  <text x="96" y="470" fill="#cbd5e1" font-size="34" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">${descriptionText}</text>
-  <text x="96" y="586" fill="#93c5fd" font-size="28" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">by ${author}</text>
+  <text x="96" y="250" fill="#f8fafc" font-size="68" font-weight="700" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif">${titleText}</text>
 </svg>
 `.trim();
 
@@ -127,7 +146,7 @@ export const GET: APIRoute = async ({ props }) => {
 		})
 		.toBuffer();
 
-	return new Response(png, {
+	return new Response(new Uint8Array(png), {
 		headers: {
 			"Content-Type": "image/png",
 			"Cache-Control": "public, max-age=31536000, immutable",
